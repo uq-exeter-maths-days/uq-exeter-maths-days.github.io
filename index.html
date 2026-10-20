@@ -170,6 +170,16 @@ footer p { max-width: none; }
 }
 .js-reveal .rv.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .js-reveal .rv { opacity: 1; transform: none; transition: none; } }
+
+/* hero title: one slow charge-and-release glow per page load */
+@keyframes charge {
+  0%   { text-shadow: 0 0 0 transparent, 0 0 0 transparent; }
+  45%  { text-shadow: 0 0 6px color-mix(in srgb, var(--extreme) 45%, transparent), 0 0 18px color-mix(in srgb, var(--extreme) 25%, transparent); }
+  58%  { text-shadow: 0 0 8px color-mix(in srgb, var(--extreme) 55%, transparent), 0 0 26px color-mix(in srgb, var(--extreme) 32%, transparent); }
+  100% { text-shadow: 0 0 2px transparent, 0 0 60px transparent; }
+}
+.hero h1 { animation: charge 3.2s cubic-bezier(0.45, 0, 0.25, 1) 0.5s 1 both; }
+@media (prefers-reduced-motion: reduce) { .hero h1 { animation: none; } }
 </style>
 </head>
 <body>
