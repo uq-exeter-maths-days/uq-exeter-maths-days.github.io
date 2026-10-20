@@ -11,6 +11,8 @@
 :root {
   --bg: #F7F9FB;
   --page: #EAEEF3;
+  --nav: #DDE3EA;
+  --nav-shadow: rgba(20, 32, 46, 0.10);
   --surface: #FFFFFF;
   --ink: #14202E;
   --muted: #56657A;
@@ -25,12 +27,12 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0F1722; --page: #090E15; --surface: #16202D; --ink: #E6ECF3; --muted: #9AA8B9;
+    --bg: #0F1722; --page: #090E15; --nav: #05080D; --nav-shadow: rgba(0, 0, 0, 0.45); --surface: #16202D; --ink: #E6ECF3; --muted: #9AA8B9;
     --line: #2A3747; --storm: #7FB0E6; --extreme: #F2B81C; --extreme-ink: #F2B81C; --burst: #FFE28A;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0F1722; --page: #090E15; --surface: #16202D; --ink: #E6ECF3; --muted: #9AA8B9;
+  --bg: #0F1722; --page: #090E15; --nav: #05080D; --nav-shadow: rgba(0, 0, 0, 0.45); --surface: #16202D; --ink: #E6ECF3; --muted: #9AA8B9;
   --line: #2A3747; --storm: #7FB0E6; --extreme: #F2B81C; --extreme-ink: #F2B81C; --burst: #FFE28A;
 }
 *, *::before, *::after { box-sizing: inherit; }
@@ -49,13 +51,14 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--extreme); outli
 /* nav */
 nav.top {
   position: sticky; top: 0; z-index: 100;
-  background: var(--page);
-  background: color-mix(in srgb, var(--page) 88%, transparent);
+  background: var(--nav);
+  background: color-mix(in srgb, var(--nav) 90%, transparent);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 6px var(--nav-shadow);
   transition: box-shadow 0.2s ease;
 }
-nav.top.scrolled { box-shadow: 0 2px 12px rgba(20, 32, 46, 0.08); }
+nav.top.scrolled { box-shadow: 0 2px 14px var(--nav-shadow); }
 nav.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; min-height: 60px; flex-wrap: wrap; padding-top: 0.6rem; padding-bottom: 0.6rem; }
 .brand { font-weight: 600; color: var(--ink); text-decoration: none; font-size: 0.95rem; }
 nav.top ul { list-style: none; display: flex; gap: 1.4rem; margin: 0; padding: 0; flex-wrap: wrap; }
@@ -68,8 +71,9 @@ nav.top ul a.nav-cta:hover { background: var(--storm); color: var(--bg); }
 /* hero */
 .hero { padding: 4.5rem 0 3.5rem; border-bottom: 1px solid var(--line); }
 .hero h1 {
-  font-family: "Newsreader", Georgia, serif; font-weight: 400;
-  font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 1.04; letter-spacing: -0.02em;
+  font-family: "Century Gothic", CenturyGothic, "URW Gothic", "URW Gothic L", AppleGothic, Futura, "Avenir Next", "Instrument Sans", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 5.6vw, 4.1rem); line-height: 1.08; letter-spacing: -0.015em;
   margin: 0 0 1.25rem; max-width: 16ch;
 }
 .hero .series { font-size: 1.05rem; color: var(--muted); margin: 0 0 0.5rem; }
