@@ -157,6 +157,15 @@ p { margin: 0 0 1rem; max-width: 66ch; }
 
 footer { padding: 2.5rem 0 3.5rem; color: var(--muted); font-size: 0.9rem; }
 footer p { max-width: none; }
+
+/* scroll reveal: only armed when JS runs, so content never stays hidden */
+.js-reveal .rv {
+  opacity: 0; transform: translate(var(--rx, 0), var(--ry, 0));
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+.js-reveal .rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .js-reveal .rv { opacity: 1; transform: none; transition: none; } }
 </style>
 </head>
 <body>
@@ -555,6 +564,48 @@ footer p { max-width: none; }
   function fitPadding() { document.documentElement.style.scrollPaddingTop = (nav.offsetHeight + 16) + 'px'; }
   window.addEventListener('resize', fitPadding);
   fitPadding();
+})();
+</script>
+<script>
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var OFFSET = { left: ['-28px', '0'], right: ['28px', '0'], up: ['0', '24px'], down: ['0', '-24px'] };
+  // heading direction, then the content column's items, staggered
+  var PLAN = {
+    about: ['left', 'right'],
+    programme: ['right', 'up'],
+    attend: ['up', 'left'],
+    organisers: ['right', 'up']
+  };
+  var targets = [];
+  function mark(el, dir, delay) {
+    var o = OFFSET[dir];
+    el.classList.add('rv');
+    el.style.setProperty('--rx', o[0]);
+    el.style.setProperty('--ry', o[1]);
+    el.style.setProperty('--d', delay + 'ms');
+    targets.push(el);
+  }
+  Object.keys(PLAN).forEach(function (id) {
+    var sec = document.getElementById(id);
+    if (!sec) return;
+    var h2 = sec.querySelector('.cols > h2');
+    var body = h2 && h2.nextElementSibling;
+    if (h2) mark(h2, PLAN[id][0], 0);
+    if (!body) return;
+    var items = body.children;
+    Array.prototype.forEach.call(items, function (el, i) { mark(el, PLAN[id][1], 120 + i * 90); });
+  });
+  document.documentElement.classList.add('js-reveal');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+  targets.forEach(function (el) { io.observe(el); });
 })();
 </script>
 </body>
