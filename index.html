@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UQ-Exeter Mathematics Days 2026 | Extremes and Rare Events in Climate Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F9FB;
+  --surface: #FFFFFF;
+  --ink: #14202E;
+  --muted: #56657A;
+  --line: #D6DEE7;
+  --storm: #1F5C99;
+  --extreme: #D99A00;
+  --extreme-ink: #7A5600;
+  --burst: #FFC933;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1722; --surface: #16202D; --ink: #E6ECF3; --muted: #9AA8B9;
+    --line: #2A3747; --storm: #7FB0E6; --extreme: #F2B81C; --extreme-ink: #F2B81C; --burst: #FFE28A;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1722; --surface: #16202D; --ink: #E6ECF3; --muted: #9AA8B9;
+  --line: #2A3747; --storm: #7FB0E6; --extreme: #F2B81C; --extreme-ink: #F2B81C; --burst: #FFE28A;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.0625rem; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--storm); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--extreme); outline-offset: 3px; border-radius: 2px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* nav */
+nav.top { border-bottom: 1px solid var(--line); }
+nav.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 60px; flex-wrap: wrap; }
+.brand { font-weight: 600; color: var(--ink); text-decoration: none; font-size: 0.95rem; }
+nav.top ul { list-style: none; display: flex; gap: 1.4rem; margin: 0; padding: 0; flex-wrap: wrap; }
+nav.top ul a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+nav.top ul a:hover { color: var(--ink); }
+
+/* hero */
+.hero { padding: 4.5rem 0 0; }
+.hero h1 {
+  font-family: "Newsreader", Georgia, serif; font-weight: 400;
+  font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 1.04; letter-spacing: -0.02em;
+  margin: 0 0 1.25rem; max-width: 16ch;
+}
+.hero .series { font-size: 1.05rem; color: var(--muted); margin: 0 0 0.5rem; }
+.hero .facts { display: flex; flex-wrap: wrap; gap: 0.5rem 2.5rem; margin: 2rem 0 0; padding: 0; list-style: none; }
+.hero .facts li { font-size: 1rem; }
+.hero .facts strong { display: block; font-weight: 600; }
+.hero .facts span { color: var(--muted); }
+.figure { margin: 3rem 0 0; padding-bottom: 3rem; border-bottom: 1px solid var(--line); }
+.net { width: 100%; height: auto; display: block; touch-action: manipulation; }
+.net .edge { stroke: var(--muted); opacity: 0.28; }
+.net .edge-lit { stroke: var(--extreme); stroke-linecap: round; pointer-events: none; }
+.net .burst-glow { stroke: var(--extreme); stroke-width: 6; stroke-linecap: round; pointer-events: none; filter: blur(1.5px); }
+.net .burst-core { stroke: var(--burst); stroke-width: 2.4; stroke-linecap: round; pointer-events: none; }
+.net .burst-head { fill: var(--burst); pointer-events: none; }
+.net .node { fill: var(--bg); stroke: var(--storm); stroke-width: 1.6; cursor: pointer; }
+.net .node-fill { fill: var(--extreme); pointer-events: none; }
+.net .halo { fill: var(--extreme); pointer-events: none; }
+.net .sel { fill: none; stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
+.net .hit { fill: transparent; cursor: pointer; }
+.net .hit:focus-visible { outline: none; stroke: var(--extreme); stroke-width: 2; }
+.readout { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 1.5rem; margin: 1.25rem 0 0.5rem; font-size: 0.95rem; color: var(--muted); }
+.readout strong { color: var(--ink); font-weight: 600; }
+.readout button {
+  margin-left: auto; font: inherit; font-size: 0.9rem; color: var(--ink); background: transparent;
+  border: 1px solid var(--line); border-radius: 4px; padding: 0.3rem 0.85rem; cursor: pointer;
+}
+.readout button:hover { border-color: var(--muted); }
+.series-plot { width: 100%; height: 130px; display: block; cursor: crosshair; }
+.series-plot .trace { fill: none; stroke: var(--storm); stroke-width: 1.4; opacity: 0.85; }
+.series-plot .threshold { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 4 5; opacity: 0.5; }
+.series-plot .exceed { fill: var(--extreme); }
+.series-plot .cursor { stroke: var(--ink); stroke-width: 1.5; opacity: 0.7; }
+.plot-note { font-size: 0.85rem; color: var(--muted); margin: 0.75rem 0 0; max-width: 72ch; }
+.legend { display: inline-flex; align-items: center; gap: 0.35rem; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.sw.e { background: var(--extreme); }
+.sw.n { border: 1.6px solid var(--storm); }
+
+/* sections */
+section { padding: 4.5rem 0; border-bottom: 1px solid var(--line); }
+.cols { display: grid; grid-template-columns: 1fr; gap: 1.5rem 4rem; }
+@media (min-width: 820px) { .cols { grid-template-columns: 260px 1fr; } }
+h2 { font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: 2rem; line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+h3 { font-size: 1.05rem; font-weight: 600; margin: 0 0 0.35rem; }
+p { margin: 0 0 1rem; max-width: 66ch; }
+.lead { font-size: 1.2rem; line-height: 1.55; }
+
+.themes { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0; }
+.themes li { padding: 1rem 0; border-top: 1px solid var(--line); max-width: 66ch; }
+.themes li:last-child { border-bottom: 1px solid var(--line); }
+.themes span { display: block; color: var(--muted); font-size: 0.97rem; }
+
+/* time bridge */
+.bridge { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1.75rem; margin: 0 0 2rem; }
+.bridge-row { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 640px) { .bridge-row { grid-template-columns: 1fr 1fr 1fr; } }
+.place { font-size: 0.9rem; color: var(--muted); }
+.clock { font-family: "Newsreader", Georgia, serif; font-size: 1.9rem; line-height: 1.2; }
+.clock small { font-family: "Instrument Sans", sans-serif; font-size: 0.9rem; color: var(--muted); display: block; }
+.you .clock { color: var(--storm); }
+
+.days { list-style: none; margin: 0; padding: 0; }
+.days li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+.days li:last-child { border-bottom: 1px solid var(--line); }
+.days .d { font-weight: 600; }
+.days .t { color: var(--muted); }
+.tba { display: inline-block; font-size: 0.85rem; color: var(--extreme-ink); border: 1px solid var(--extreme); border-radius: 3px; padding: 0.05rem 0.5rem; margin-left: 0.4rem; }
+
+.venues { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+@media (min-width: 640px) { .venues { grid-template-columns: 1fr 1fr 1fr; } }
+.venues p { font-size: 0.98rem; color: var(--muted); }
+
+.people { display: grid; grid-template-columns: 1fr; gap: 1.5rem 2rem; list-style: none; padding: 0; margin: 0; }
+@media (min-width: 560px) { .people { grid-template-columns: 1fr 1fr; } }
+.people li strong { display: block; font-weight: 600; }
+.people li span { color: var(--muted); font-size: 0.97rem; }
+
+
+footer { padding: 2.5rem 0 3.5rem; color: var(--muted); font-size: 0.9rem; }
+footer p { max-width: none; }
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#">UQ-Exeter Mathematics Days 2026</a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#programme">Programme</a></li>
+      <li><a href="#attend">Attend</a></li>
+      <li><a href="#organisers">Organisers</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="series">UQ-Exeter Mathematics Days 2026</p>
+    <h1>Extremes and Rare Events in Climate Systems</h1>
+    <ul class="facts">
+      <li><strong>7 to 11 December 2026</strong><span>Four days of talks, then a day of open discussion</span></li>
+      <li><strong>6pm to 8pm Brisbane</strong><span>8am to 10am Exeter</span></li>
+      <li><strong>Hybrid</strong><span>In person at UQ and Exeter, and online. Friday is online only</span></li>
+    </ul>
+    <figure class="figure" aria-label="Simulated network of weather stations showing spatial extremes">
+      <svg class="net" id="net" viewBox="0 0 1000 330" role="group" aria-label="Network of simulated stations. Stations turn amber on days above their high threshold, and links turn amber when both ends are extreme together."></svg>
+      <div class="readout" aria-live="polite">
+        <span>Day <strong id="dayNum">1</strong> of 250</span>
+        <span><strong id="extCount">0</strong> of <span id="nodeCount">0</span> stations above threshold</span>
+        <span class="legend"><span class="sw e"></span>Extreme</span>
+        <span class="legend"><span class="sw n"></span>Typical</span>
+        <button type="button" id="play">Pause</button>
+      </div>
+      <svg class="series-plot" id="plot" viewBox="0 0 1000 130" preserveAspectRatio="none" role="img" aria-label="Daily series at the selected station, with days above its high threshold highlighted"></svg>
+      <figcaption class="plot-note">Simulated stations linked by tail dependence, with weather systems drifting across the region. Below is the series at the ringed station, where amber bars are days above its 95th percentile and the dashed line is the threshold. Select a station to see its series, or click the series to jump to a day.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+<section id="about">
+  <div class="wrap cols">
+    <h2>About the workshop</h2>
+    <div>
+      <p class="lead">A week of short talks linking researchers at the University of Queensland and the University of Exeter who work on the mathematics and statistics of extreme weather.</p>
+      <p>Each session is streamed live between the two campuses, so Brisbane meets in the evening and Exeter in the morning of the same day. Monday to Thursday are fifteen minute overview talks pitched to a mixed audience across mathematics, statistics and climate science. Friday is an online day of open research discussion in Zoom breakout rooms, each dedicated to a topic. We welcome people at every career stage, from HDR students and postdocs through to senior researchers and those working in industry.</p>
+      <ul class="themes">
+        <li>Extremes in dynamical systems<span>Extreme value theory for deterministic and random dynamics.</span></li>
+        <li>Return times and recurrence<span>How often extreme events come back, and how long we wait for them.</span></li>
+        <li>Machine learning for climate extremes<span>Spatio-temporal methods for rare events in climate data.</span></li>
+        <li>Consecutive and compound events<span>Heatwaves, persistent rainfall and co-occurring hazards under a changing climate.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="programme">
+  <div class="wrap cols">
+    <h2>Programme</h2>
+    <div>
+      <div class="bridge" aria-label="Session times in each location">
+        <div class="bridge-row">
+          <div><div class="place">Brisbane (AEST)</div><div class="clock">6pm to 8pm<small>Evening</small></div></div>
+          <div><div class="place">Exeter (GMT)</div><div class="clock">8am to 10am<small>Morning, same day</small></div></div>
+          <div class="you"><div class="place">Your time zone</div><div class="clock" id="local">Working it out<small>&nbsp;</small></div></div>
+        </div>
+      </div>
+      <ul class="days" id="days"></ul>
+      <p style="margin-top:1.5rem">Individual talk times will be posted here once the speaker list is confirmed, along with the Friday discussion topics.</p>
+    </div>
+  </div>
+</section>
+
+<section id="attend">
+  <div class="wrap cols">
+    <h2>Attend</h2>
+    <div class="venues">
+      <div>
+        <h3>University of Queensland</h3>
+        <p>In person on the St Lucia campus, Brisbane, Monday to Thursday. Room to be confirmed. Catering provided.</p>
+      </div>
+      <div>
+        <h3>University of Exeter</h3>
+        <p>In person at Exeter, Monday to Thursday. Room to be confirmed. Catering provided.</p>
+      </div>
+      <div>
+        <h3>Online</h3>
+        <p>Join any talk session remotely. Friday&rsquo;s discussion day is held entirely on Zoom, with separate meeting rooms for each topic. Links will be sent to registered participants before the workshop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="organisers">
+  <div class="wrap cols">
+    <h2>Organisers</h2>
+    <ul class="people">
+      <li><strong>Meagan Carney</strong><span>University of Queensland</span></li>
+      <li><strong>Max Auer</strong><span>University of Queensland</span></li>
+      <li><strong>Mark Holland</strong><span>University of Exeter</span></li>
+      <li><strong>Ben Youngman</strong><span>University of Exeter</span></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Supported by a UQ-Exeter Institute Workshop Grant and the UQ School of Mathematics and Physics.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Spatial extremes figure: stations on a network driven by drifting weather systems
+  var ns = 'http://www.w3.org/2000/svg';
+  var s = 20261207;
+  function rnd() { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }
+  function gauss() { var u = rnd() || 1e-9, v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(ns, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  var W = 1000, NH = 330, T = 250, N = 36;
+
+  // Station positions with minimum spacing
+  var pts = [], tries = 0;
+  while (pts.length < N && tries < 5000) {
+    tries++;
+    var p = { x: 40 + rnd() * (W - 80), y: 30 + rnd() * (NH - 60) };
+    var ok = pts.every(function (q) { return Math.hypot(p.x - q.x, p.y - q.y) > 70; });
+    if (ok) pts.push(p);
+  }
+  N = pts.length;
+
+  // Weather systems: drifting blobs with log-AR(1) intensity
+  var blobs = [];
+  for (var b = 0; b < 3; b++) blobs.push({ x: rnd() * W, y: rnd() * NH, vx: 3 + rnd() * 3, vy: (rnd() - 0.5) * 1.5, z: 0 });
+  var sig = 130, vals = [];
+  for (var i = 0; i < N; i++) vals.push([]);
+  var local = new Array(N).fill(0);
+  for (var t = 0; t < T; t++) {
+    blobs.forEach(function (bl) {
+      bl.z = 0.9 * bl.z + 0.45 * gauss();
+      bl.x = (bl.x + bl.vx) % (W + 300); bl.y += bl.vy;
+      if (bl.y < 0 || bl.y > NH) bl.vy = -bl.vy;
+    });
+    for (var j = 0; j < N; j++) {
+      var v = 0;
+      blobs.forEach(function (bl) {
+        var dx = pts[j].x - (bl.x - 150), dy = pts[j].y - bl.y;
+        v += Math.exp(0.6 * bl.z) * Math.exp(-(dx * dx + dy * dy) / (2 * sig * sig));
+      });
+      local[j] = 0.6 * local[j] + 0.3 * gauss();
+      vals[j].push(v + local[j]);
+    }
+  }
+  var thr = vals.map(function (row) { var sr = row.slice().sort(function (a, b) { return a - b; }); return sr[Math.floor(T * 0.95)]; });
+  var isExt = vals.map(function (row, j) { return row.map(function (v) { return v > thr[j]; }); });
+
+  // Edges: three nearest neighbours
+  var edges = [], seen = {};
+  pts.forEach(function (p, a) {
+    pts.map(function (q, c) { return { c: c, d: Math.hypot(p.x - q.x, p.y - q.y) }; })
+      .filter(function (o) { return o.c !== a; })
+      .sort(function (u, w) { return u.d - w.d; }).slice(0, 3)
+      .forEach(function (o) {
+        var key = Math.min(a, o.c) + '-' + Math.max(a, o.c);
+        if (!seen[key]) { seen[key] = 1; edges.push({ a: a, b: o.c, d: o.d }); }
+      });
+  });
+
+  var net = document.getElementById('net');
+  var gE = el('g', {}, net), gL = el('g', {}, net), gB = el('g', {}, net), gH = el('g', {}, net), gN = el('g', {}, net);
+  edges.forEach(function (e) {
+    e.len = Math.hypot(pts[e.b].x - pts[e.a].x, pts[e.b].y - pts[e.a].y);
+    e.w = 2.4 * Math.exp(-e.d / 160) + 0.5;
+    el('line', { x1: pts[e.a].x, y1: pts[e.a].y, x2: pts[e.b].x, y2: pts[e.b].y, class: 'edge', 'stroke-width': e.w.toFixed(2) }, gE);
+    e.lit = el('line', { x1: pts[e.a].x, y1: pts[e.a].y, x2: pts[e.b].x, y2: pts[e.b].y, class: 'edge-lit', 'stroke-width': (e.w + 0.6).toFixed(2), opacity: 0 }, gL);
+    e.glow = el('line', { class: 'burst-glow', opacity: 0 }, gB);
+    e.core = el('line', { class: 'burst-core', opacity: 0 }, gB);
+    e.head = el('circle', { r: 3.2, class: 'burst-head', opacity: 0 }, gB);
+    e.tw = tween(0);
+    e.burst = null;
+  });
+  var haloEls = pts.map(function (p) { return el('circle', { cx: p.x, cy: p.y, r: 0, class: 'halo' }, gH); });
+  var baseEls = pts.map(function (p) { return el('circle', { cx: p.x, cy: p.y, r: 6.5, class: 'node' }, gN); });
+  var fillEls = pts.map(function (p) { return el('circle', { cx: p.x, cy: p.y, r: 0, class: 'node-fill' }, gN); });
+  var selRing = el('circle', { r: 12, class: 'sel' }, gN);
+  pts.forEach(function (p, j) {
+    var h = el('circle', { cx: p.x, cy: p.y, r: 16, class: 'hit', tabindex: 0, role: 'button', 'aria-label': 'Show series for station ' + (j + 1) }, gN);
+    h.addEventListener('click', function () { select(j); });
+    h.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); select(j); } });
+  });
+  document.getElementById('nodeCount').textContent = N;
+
+  // Series panel
+  var plot = document.getElementById('plot'), PH = 130, pad = 8;
+  var gS = el('g', {}, plot);
+  var cursor = el('line', { y1: 0, y2: PH, class: 'cursor', 'vector-effect': 'non-scaling-stroke' }, plot);
+  function X(t) { return t / (T - 1) * W; }
+  var sel = 0;
+  function select(j) {
+    sel = j;
+    selRing.setAttribute('cx', pts[j].x); selRing.setAttribute('cy', pts[j].y);
+    while (gS.firstChild) gS.removeChild(gS.firstChild);
+    var row = vals[j], mn = Math.min.apply(null, row), mx = Math.max.apply(null, row);
+    function Y(v) { return PH - pad - (v - mn) / (mx - mn) * (PH - 2 * pad); }
+    var bw = W / (T - 1) * 0.7;
+    row.forEach(function (v, t) {
+      if (v > thr[j]) el('rect', { x: (X(t) - bw / 2).toFixed(1), width: bw.toFixed(1), y: Y(v).toFixed(1), height: (Y(thr[j]) - Y(v)).toFixed(1), class: 'exceed' }, gS);
+    });
+    el('path', { d: row.map(function (v, t) { return (t ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(v).toFixed(1); }).join(' '), class: 'trace', 'vector-effect': 'non-scaling-stroke' }, gS);
+    el('line', { x1: 0, x2: W, y1: Y(thr[j]), y2: Y(thr[j]), class: 'threshold', 'vector-effect': 'non-scaling-stroke' }, gS);
+  }
+
+  // Onset of the current run of extremes at each station, used for burst direction
+  var onset = isExt.map(function (row) {
+    var out = [], start = -1;
+    row.forEach(function (e, t) { if (e) { if (start < 0) start = t; out.push(start); } else { start = -1; out.push(-1); } });
+    return out;
+  });
+  function sev(j, t) { return Math.min(1, Math.max(0, (vals[j][t] - thr[j]) / (Math.abs(thr[j]) * 0.8 + 0.2))); }
+
+  var nodeTw = pts.map(function () { return tween(0); });
+  var haloSize = pts.map(function () { return 0; });
+  var haloTarget = pts.map(function () { return 0; });
+  var NODE_IN = 200, NODE_OUT = 480, BURST = 320, LINK_IN = 200, LINK_OUT = 480;
+
+  var day = 0, reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function draw(t, fromStep) {
+    var prev = day; day = t;
+    var now = performance.now(), count = 0, instant = reduce, arrive = {}, sources = {};
+    edges.forEach(function (ed) {
+      var joint = isExt[ed.a][t] && isExt[ed.b][t];
+      var wasJoint = isExt[ed.a][prev] && isExt[ed.b][prev];
+      if (joint && !wasJoint && fromStep && !instant) {
+        // Burst from the station whose run began first; ties go from the more extreme one
+        var oa = onset[ed.a][t], ob = onset[ed.b][t], src;
+        if (oa !== ob) src = oa < ob ? ed.a : ed.b;
+        else src = vals[ed.a][t] - thr[ed.a] >= vals[ed.b][t] - thr[ed.b] ? ed.a : ed.b;
+        var dst = src === ed.a ? ed.b : ed.a;
+        ed.burst = { t0: now, src: src, dst: dst };
+        if (onset[dst][t] === t) arrive[dst] = true;
+        sources[src] = true;
+        [ed.glow, ed.core].forEach(function (ln) {
+          ln.setAttribute('x1', pts[src].x); ln.setAttribute('y1', pts[src].y);
+          ln.setAttribute('x2', pts[dst].x); ln.setAttribute('y2', pts[dst].y);
+        });
+        setT(ed.tw, 1, now, LINK_IN, BURST * 0.7, false);
+      } else {
+        setT(ed.tw, joint ? 1 : 0, now, joint ? LINK_IN : LINK_OUT, 0, instant);
+      }
+    });
+    // Stations reached by a burst light up as the pulse arrives, unless they also send one
+    for (var k in sources) delete arrive[k];
+    for (var j = 0; j < N; j++) {
+      var e = isExt[j][t];
+      if (e) { count++; haloTarget[j] = 10 + 14 * sev(j, t); }
+      setT(nodeTw[j], e ? 1 : 0, now, e ? NODE_IN : NODE_OUT, e && arrive[j] ? BURST * 0.75 : 0, instant);
+    }
+    cursor.setAttribute('x1', X(t)); cursor.setAttribute('x2', X(t));
+    document.getElementById('dayNum').textContent = t + 1;
+    document.getElementById('extCount').textContent = count;
+    if (instant) render(now);
+  }
+
+  function render(now) {
+    for (var j = 0; j < N; j++) {
+      var lv = val(nodeTw[j], now);
+      haloSize[j] = reduce ? haloTarget[j] : haloSize[j] + (haloTarget[j] - haloSize[j]) * 0.18;
+      fillEls[j].setAttribute('r', (6.5 * (0.35 + 0.65 * lv) * (lv > 0.001 ? 1 : 0)).toFixed(2));
+      fillEls[j].setAttribute('opacity', lv.toFixed(3));
+      baseEls[j].setAttribute('stroke-opacity', (1 - 0.6 * lv).toFixed(3));
+      haloEls[j].setAttribute('r', (haloSize[j] * lv).toFixed(2));
+      haloEls[j].setAttribute('opacity', (0.2 * lv).toFixed(3));
+    }
+    edges.forEach(function (ed) {
+      ed.lit.setAttribute('opacity', (0.9 * val(ed.tw, now)).toFixed(3));
+      var b = ed.burst;
+      if (!b) return;
+      var p = (now - b.t0) / BURST;
+      if (p >= 1.35) {
+        ed.burst = null;
+        ed.glow.setAttribute('opacity', 0); ed.core.setAttribute('opacity', 0); ed.head.setAttribute('opacity', 0);
+        return;
+      }
+      var q = easeOutCubic(Math.min(1, p));
+      var L = ed.len, seg = Math.max(18, L * 0.35);
+      // The pulse is a dash whose leading edge travels from source to destination
+      var head = q * L;
+      var off = seg - head;
+      var fade = p < 1 ? 1 : 1 - (p - 1) / 0.35;
+      [ed.glow, ed.core].forEach(function (ln) {
+        ln.setAttribute('stroke-dasharray', seg.toFixed(1) + ' ' + (L + seg).toFixed(1));
+        ln.setAttribute('stroke-dashoffset', off.toFixed(1));
+      });
+      ed.glow.setAttribute('opacity', (0.45 * fade).toFixed(3));
+      ed.core.setAttribute('opacity', fade.toFixed(3));
+      var sx = pts[b.src].x, sy = pts[b.src].y, dx = pts[b.dst].x, dy = pts[b.dst].y;
+      ed.head.setAttribute('cx', (sx + (dx - sx) * q).toFixed(1));
+      ed.head.setAttribute('cy', (sy + (dy - sy) * q).toFixed(1));
+      ed.head.setAttribute('r', (3.2 + 2 * Math.max(0, p - 0.85) / 0.5).toFixed(2));
+      ed.head.setAttribute('opacity', fade.toFixed(3));
+    });
+  }
+
+  // Start on the busiest station and the day with the most joint extremes
+  var perDay = []; for (var t2 = 0; t2 < T; t2++) { var c = 0; for (var j2 = 0; j2 < N; j2++) if (isExt[j2][t2]) c++; perDay.push(c); }
+  var peak = perDay.indexOf(Math.max.apply(null, perDay));
+  var best = 0; for (var j3 = 0; j3 < N; j3++) if (isExt[j3][peak] && vals[j3][peak] - thr[j3] > (isExt[best][peak] ? vals[best][peak] - thr[best] : -Infinity)) best = j3;
+  select(best);
+
+  var playing = !reduce, last = 0, btn = document.getElementById('play');
+  btn.textContent = playing ? 'Pause' : 'Play';
+  draw(reduce ? peak : 0, false);
+  btn.addEventListener('click', function () { playing = !playing; btn.textContent = playing ? 'Pause' : 'Play'; });
+  plot.addEventListener('click', function (ev) {
+    var r = plot.getBoundingClientRect();
+    draw(Math.max(0, Math.min(T - 1, Math.round((ev.clientX - r.left) / r.width * (T - 1)))), false);
+    playing = false; btn.textContent = 'Play';
+  });
+  if (!reduce) {
+    (function tick(now) {
+      if (playing && now - last > 90) { last = now; draw((day + 1) % T, day + 1 < T); }
+      render(now);
+      requestAnimationFrame(tick);
+    })(performance.now());
+  }
+
+  // Easing helpers
+  function easeInOutCubic(p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
+  function easeOutCubic(p) { return 1 - Math.pow(1 - p, 3); }
+  function tween(v) { return { from: v, to: v, t0: 0, dur: 1 }; }
+  function val(tw, now) {
+    var p = Math.min(1, Math.max(0, (now - tw.t0) / tw.dur));
+    return tw.from + (tw.to - tw.from) * easeInOutCubic(p);
+  }
+  function setT(tw, to, now, dur, delay, instant) {
+    if (instant) { tw.from = tw.to = to; tw.t0 = 0; tw.dur = 1; return; }
+    if (tw.to === to) return;
+    var end = tw.t0 + tw.dur;
+    if (to < tw.to && end > now) {
+      // Let a rise finish before fading, so short events still register
+      tw.from = tw.to; tw.to = to; tw.t0 = Math.max(end, now + delay); tw.dur = dur; return;
+    }
+    tw.from = val(tw, now); tw.to = to; tw.t0 = now + delay; tw.dur = dur;
+  }
+
+  // Days, with each session shown in the viewer's local time
+  var days = ['Monday 7 December', 'Tuesday 8 December', 'Wednesday 9 December', 'Thursday 10 December', 'Friday 11 December'];
+  var list = document.getElementById('days');
+  var tz;
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { tz = null; }
+  function fmtTime(dt) {
+    try { return dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; }
+  }
+  function fmtDay(dt) {
+    try { return dt.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' }); } catch (e) { return ''; }
+  }
+  days.forEach(function (label, k) {
+    var start = new Date(Date.UTC(2026, 11, 7 + k, 8, 0));
+    var end = new Date(Date.UTC(2026, 11, 7 + k, 10, 0));
+    var li = document.createElement('li');
+    var dd = document.createElement('div'); dd.className = 'd'; dd.textContent = label.split(' ')[0];
+    var tt = document.createElement('div');
+    if (k === 4) {
+      tt.innerHTML = label.split(' ').slice(1).join(' ') + ' <span class="tba">Online only</span>' +
+        '<div>Open research discussion in Zoom meeting rooms, each with a dedicated topic. Topics to be announced.</div>';
+    } else {
+      tt.innerHTML = label.split(' ').slice(1).join(' ') + ' <span class="tba">Speakers to be announced</span>';
+    }
+    var loc = document.createElement('div'); loc.className = 't';
+    loc.textContent = 'Your time ' + fmtDay(start) + ', ' + fmtTime(start) + ' to ' + fmtTime(end);
+    tt.appendChild(loc);
+    li.appendChild(dd); li.appendChild(tt); list.appendChild(li);
+  });
+  var s0 = new Date(Date.UTC(2026, 11, 7, 8, 0)), e0 = new Date(Date.UTC(2026, 11, 7, 10, 0));
+  var localEl = document.getElementById('local');
+  localEl.innerHTML = fmtTime(s0) + ' to ' + fmtTime(e0) + '<small>' + (tz ? tz.replace(/_/g, ' ') : 'Local time') + '</small>';
+})();
+</script>
+</body>
+</html>
